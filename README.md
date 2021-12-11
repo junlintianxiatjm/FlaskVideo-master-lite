@@ -1,3 +1,5 @@
+对应csdn地址：https://blog.csdn.net/shanxiderenheni/article/details/121820110
+
 运行步骤：
 1.执行数据库脚本：pipeline_monitor.sql，修改数据库配置文件为本地mysql地址和账号;
 
@@ -12,4 +14,4 @@
 执行“检测”，即调用模型文件。
 
 
-对应csdn地址：https://blog.csdn.net/shanxiderenheni/article/details/121820110
+
