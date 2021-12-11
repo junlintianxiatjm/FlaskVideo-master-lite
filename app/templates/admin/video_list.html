@@ -1,0 +1,165 @@
+{% extends 'admin/base.html' %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <section class="content-header">
+        <h1>目标检测系统</h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 视频管理</a></li>
+            <li class="active">视频列表</li>
+        </ol>
+    </section>
+    <section class="content" id="showcontent">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">视频列表</h3>
+                        <div class="box-tools">
+                            <div class="input-group input-group-sm" style="width: 150px;">
+                                <input type="text" name="table_search" class="form-control pull-right"
+                                       placeholder="请输入关键字...">
+
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        {% with msgs = get_flashed_messages(category_filter=['ok']) %}
+                            {% if msgs %}
+                                <div class="alert alert-success alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×
+                                    </button>
+                                    <h4><i class="icon fa fa-check"></i> 成功!</h4>
+                                    {% for msg in msgs %}
+                                        <p>{{ msg }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <th>序号</th>
+                                <th>片名</th>
+                                <th>片长</th>
+                                <th>所属区域</th>
+                                <th>检测时间</th>
+                                <th>操作事项</th>
+                            </tr>
+                            {% for video in page_videos.items %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ video.title }}</td>
+                                    <td>{{ video.length }} 分钟</td>
+                                    <td>{{ video.area }}</td>
+                                    <td>{{ video.release_time }}</td>
+                                    <td>
+                                    <!--判断一下video.detect字段，如果为1，说明已经检测过，再点击则弹出弹框，若为0，则直接运行检测 -->
+                                        {% if video.detect %}
+                                            <!--TODO 如果视频已经检测过，增加选择是否再次显示弹窗 -->
+                                            <a class="label label-success"
+                                               href="" data-toggle="modal" data-target="#wieder-detect">检测</a>
+                                        {% else %}
+                                            <a class="label label-success"
+                                               href="{{ url_for('admin.video_detect', detect_id=video.id) }}">检测</a>
+                                        {% endif %}
+                                        <a class="label label-success"
+                                           href="{{ url_for('admin.video_publish', publish_id=video.id) }}">发布</a>
+                                        <a class="label label-primary"
+                                           href="{{ url_for('admin.video_update', update_id=video.id) }}">编辑</a>
+                                        <a class="label label-danger"
+                                           href="" data-toggle="modal" data-target="#delete_post">删除</a>
+                                        {% if video.detect %}
+                                            <a class="label label-success"
+                                               href="{{ url_for('admin.video_download', video_id=video.id) }}">下载</a>
+                                        {% endif %}
+                                    </td>
+
+                                    <div class="modal fade" id="delete_post" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-hidden="true">
+                                                        &times;
+                                                    </button>
+                                                    <h4 class="modal-title pull-left" id="deleteLabel">确定删除</h4>
+                                                </div>
+                                                <div class="modal-body" data->确定删除该视频文件吗？</div>
+                                                <div class="modal-footer">
+                                                    <a href="<script>return:void(0)</script>">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">取消
+                                                        </button>
+                                                    </a>
+                                                    <a href="{{ url_for('admin.video_delete', delete_id=video.id) }}">
+                                                        <button type="button" class="btn btn-primary">确定</button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="wieder-detect" tabindex="-1" role="dialog"
+                                         aria-labelledby="deleteLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-hidden="true">
+                                                        &times;
+                                                    </button>
+                                                    <h4 class="modal-title pull-left" id="deleteLabel">确定删除</h4>
+                                                </div>
+                                                <div class="modal-body" data->该视频已检测过，是否重新检测？</div>
+                                                <div class="modal-footer">
+                                                    <a href="<script>return:void(0)</script>">
+                                                        <button type="button" class="btn btn-default"
+                                                                data-dismiss="modal">取消
+                                                        </button>
+                                                    </a>
+                                                    <a href="{{ url_for('admin.video_detect', detect_id=video.id) }}">
+                                                        <button type="button" class="btn btn-primary">确定</button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="box-footer clearfix">
+                        <!--页码模块-->
+                        {% import 'admin/pagination.html' as pg %}
+                        {{ pg.render_pagination(page_videos, 'admin.video_list') }}
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block js %}
+    <script>
+        // 激活菜单栏
+        $(document).ready(function () {
+            $("#g-3").addClass('active');
+            $("#g-3-2").addClass('active');
+        })
+
+
+    </script>
+{% endblock %}
