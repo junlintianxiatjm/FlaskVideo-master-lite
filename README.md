@@ -7,7 +7,7 @@
 
 3.启动flask框架，manage.py;
 
-4.访问localhost:5000/admin
+4.访问http://localhost:5000/admin/login/
 
 5.账号/密码：admin/flaskadmin
 
